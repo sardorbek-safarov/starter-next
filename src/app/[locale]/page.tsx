@@ -13,5 +13,5 @@ export default async function Home({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
-  return <HomePage locale={locale} />;
+  return <HomePage locale={locale as 'en' | 'uz' | 'ru'} />;
 }

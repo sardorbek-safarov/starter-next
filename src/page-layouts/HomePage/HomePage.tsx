@@ -1,6 +1,7 @@
 import { WelcomeHeader, ActionButtons, Footer } from '@/widgets';
 import { LanguageSwitcher } from '@/shared/ui';
-import { type Locale } from '@/shared/config/i18n';
+
+type Locale = 'en' | 'uz' | 'ru';
 
 interface HomePageProps {
   locale: Locale;

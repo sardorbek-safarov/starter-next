@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginFormProps {
   onSubmit?: (email: string, password: string) => void;
@@ -12,14 +13,33 @@ export function LoginForm({ onSubmit, className = '' }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const t = useTranslations('Auth');
+  const { login, isLoading, error: authError } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.(email, password);
+
+    try {
+      // If onSubmit prop is provided, use it (for custom handling)
+      if (onSubmit) {
+        onSubmit(email, password);
+      } else {
+        // Otherwise use the auth context
+        await login(email, password);
+      }
+    } catch (err) {
+      // Error is now handled by TanStack Query and available in authError
+      console.error('Login error:', err);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
+      {authError && (
+        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
+          {authError}
+        </div>
+      )}
+
       <div>
         <label htmlFor='email' className='block text-sm font-medium mb-1'>
           {t('email')}
@@ -48,9 +68,10 @@ export function LoginForm({ onSubmit, className = '' }: LoginFormProps) {
       </div>
       <button
         type='submit'
-        className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium'
+        disabled={isLoading}
+        className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50'
       >
-        {t('signIn')}
+        {isLoading ? 'Signing in...' : t('signIn')}
       </button>
     </form>
   );
