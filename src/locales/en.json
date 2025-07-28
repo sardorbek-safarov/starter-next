@@ -1,0 +1,23 @@
+{
+  "HomePage": {
+    "title": "Welcome to Next.js",
+    "description": "Get started by editing src/app/page.tsx",
+    "saveChanges": "Save and see your changes instantly",
+    "deployNow": "Deploy now",
+    "readDocs": "Read our docs",
+    "learn": "Learn",
+    "examples": "Examples",
+    "goToNextjs": "Go to nextjs.org →"
+  },
+  "Navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "Auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In"
+  }
+}

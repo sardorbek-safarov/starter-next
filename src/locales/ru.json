@@ -1,0 +1,23 @@
+{
+  "HomePage": {
+    "title": "Добро пожаловать в Next.js",
+    "description": "Начните с редактирования src/app/page.tsx",
+    "saveChanges": "Сохраните и сразу увидите изменения",
+    "deployNow": "Развернуть сейчас",
+    "readDocs": "Читать документацию",
+    "learn": "Изучить",
+    "examples": "Примеры",
+    "goToNextjs": "Перейти на nextjs.org →"
+  },
+  "Navigation": {
+    "home": "Главная",
+    "about": "О нас",
+    "contact": "Контакты"
+  },
+  "Auth": {
+    "login": "Войти",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "signIn": "Войти"
+  }
+}

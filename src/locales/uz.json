@@ -1,0 +1,23 @@
+{
+  "HomePage": {
+    "title": "Next.js ga xush kelibsiz",
+    "description": "src/app/page.tsx faylini tahrirlash orqali boshlang",
+    "saveChanges": "Saqlang va o'zgarishlarni darhol ko'ring",
+    "deployNow": "Hozir joylashtiring",
+    "readDocs": "Hujjatlarni o'qing",
+    "learn": "O'rganish",
+    "examples": "Misollar",
+    "goToNextjs": "nextjs.org ga o'ting →"
+  },
+  "Navigation": {
+    "home": "Bosh sahifa",
+    "about": "Haqida",
+    "contact": "Aloqa"
+  },
+  "Auth": {
+    "login": "Kirish",
+    "email": "Elektron pochta",
+    "password": "Parol",
+    "signIn": "Kirish"
+  }
+}
