@@ -31,7 +31,7 @@ export function LanguageSwitcher({
       uz: "O'zbekcha",
       ru: 'Русский',
     };
-    return names[locale];
+    return names[locale as keyof typeof names];
   };
 
   return (
