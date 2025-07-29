@@ -37,7 +37,7 @@ export function AuthWrapper({
 
     if (requireGuest && isActuallyAuthenticated) {
       console.log('Redirecting to dashboard - already authenticated');
-      router.push(redirectTo || '/dashboard');
+      router.push(redirectTo || '/');
       return;
     }
   }, [

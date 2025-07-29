@@ -1,27 +1,26 @@
 'use client';
 
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { LoginForm } from '@/features/auth/ui/LoginForm';
+import { AuthWrapper, RegisterForm } from '@/features';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-export function LoginClient() {
+export function RegisterClient() {
   const t = useTranslations('Auth');
 
   return (
     <AuthWrapper requireGuest redirectTo='/'>
       <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-        <LoginForm />
+        <RegisterForm />
 
         <div className='mt-6'>
           <div className='text-center'>
             <span className='text-sm text-gray-600'>
-              {t('noAccount')}{' '}
+              Already have an account?{' '}
               <Link
-                href='/register'
+                href='/login'
                 className='font-medium text-blue-600 hover:text-blue-500'
               >
-                {t('createAccount')}
+                {t('login.title')}
               </Link>
             </span>
           </div>

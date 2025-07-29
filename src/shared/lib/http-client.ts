@@ -2,6 +2,8 @@ interface RequestConfig extends RequestInit {
   skipRefresh?: boolean;
 }
 
+import { API_ENDPOINTS } from '../config/api';
+
 class HttpClient {
   private isRefreshing = false;
   private refreshPromise: Promise<boolean> | null = null;
@@ -50,7 +52,7 @@ class HttpClient {
 
   private async performRefresh(): Promise<boolean> {
     try {
-      const response = await fetch('/api/auth/refresh', {
+      const response = await fetch(API_ENDPOINTS.INTERNAL.AUTH.REFRESH, {
         method: 'POST',
         credentials: 'include',
       });

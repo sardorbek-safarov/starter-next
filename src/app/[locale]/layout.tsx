@@ -3,6 +3,8 @@ import { metadata } from '@/shared/config';
 import { AuthProvider } from '@/features/auth/context/AuthContext';
 import { getServerAuth } from '@/shared/lib/auth-server';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
+import { ToastProvider } from '@/shared/providers/ToastProvider';
+import { AsyncErrorBoundary } from '@/shared/components';
 
 export { metadata };
 
@@ -18,10 +20,10 @@ export default async function LocaleLayout({
   // Load messages for the current locale
   let messages;
   try {
-    messages = (await import(`../../locales/${locale}.json`)).default;
+    messages = (await import(`@/locales/${locale}.json`)).default;
   } catch (error) {
     // Fallback to English if locale not found
-    messages = (await import(`../../locales/en.json`)).default;
+    messages = (await import(`@/locales/en.json`)).default;
   }
 
   // Get server-side auth state
@@ -29,14 +31,16 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <QueryProvider>
-        <AuthProvider
-          initialUser={user}
-          initialIsAuthenticated={isAuthenticated}
-        >
-          {children}
-        </AuthProvider>
-      </QueryProvider>
+      <AsyncErrorBoundary>
+        <QueryProvider>
+          <AuthProvider
+            initialUser={user}
+            initialIsAuthenticated={isAuthenticated}
+          >
+            <ToastProvider>{children}</ToastProvider>
+          </AuthProvider>
+        </QueryProvider>
+      </AsyncErrorBoundary>
     </NextIntlClientProvider>
   );
 }

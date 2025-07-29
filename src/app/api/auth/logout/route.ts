@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { API_ENDPOINTS } from '@/shared/config/api';
 
 export async function POST(request: NextRequest) {
   try {
     // Get the auth cookie to forward to backend
     const authToken = request.cookies.get('auth-token')?.value;
 
-    const response = await fetch(`${process.env.API_BASE_URL}/auth/logout`, {
+    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.LOGOUT, {
       method: 'POST',
       headers: {
         Cookie: authToken ? `auth-token=${authToken}` : '',

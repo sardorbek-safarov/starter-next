@@ -1,13 +1,13 @@
 'use client';
 
-import { AuthWrapper } from '../../../features/auth/components/AuthWrapper';
-import { useAuth } from '../../../features/auth/context/AuthContext';
-import { User } from '../../../entities/user/model';
-import { UserCard } from '../../../entities/user/ui/UserCard';
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { useAuth } from '@/features/auth/context/AuthContext';
+import { User } from '@/entities/user/model';
+import { UserCard } from '@/entities/user/ui/UserCard';
 import {
   useDashboardStats,
   useUserActivities,
-} from '../../../shared/hooks/useQueries';
+} from '@/shared/hooks/useQueries';
 
 interface Activity {
   id: string;

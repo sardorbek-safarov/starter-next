@@ -1,4 +1,4 @@
-import { requireGuest } from '../../../shared/lib/auth-server';
+import { requireGuest } from '@/shared/lib/auth-server';
 import { LoginClient } from './LoginClient';
 
 export default async function LoginPage() {

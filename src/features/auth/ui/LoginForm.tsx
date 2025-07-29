@@ -34,12 +34,6 @@ export function LoginForm({ onSubmit, className = '' }: LoginFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
-      {authError && (
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
-          {authError}
-        </div>
-      )}
-
       <div>
         <label htmlFor='email' className='block text-sm font-medium mb-1'>
           {t('email')}
@@ -71,7 +65,7 @@ export function LoginForm({ onSubmit, className = '' }: LoginFormProps) {
         disabled={isLoading}
         className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50'
       >
-        {isLoading ? 'Signing in...' : t('signIn')}
+        {isLoading ? 'Signing in...' : t('login.signIn')}
       </button>
     </form>
   );

@@ -15,9 +15,38 @@
     "contact": "Aloqa"
   },
   "Auth": {
-    "login": "Kirish",
     "email": "Elektron pochta",
     "password": "Parol",
-    "signIn": "Kirish"
+    "name": "Ism",
+    "confirmPassword": "Parolni tasdiqlang",
+    "registering": "Hisob yaratilmoqda...",
+    "noAccount": "Hisobingiz yo'qmi?",
+    "createAccount": "Yaratish",
+    "login": {
+      "title": "Kirish",
+      "signIn": "Kirish",
+      "success": "Muvaffaqiyatli kirildi!"
+    },
+    "register": {
+      "title": "Ro'yxatdan o'tish",
+      "signUp": "Ro'yxatdan o'tish",
+      "success": "Hisob muvaffaqiyatli yaratildi!"
+    },
+    "logout": {
+      "success": "Muvaffaqiyatli chiqildi!"
+    }
+  },
+  "ErrorBoundary": {
+    "title": "Nimadir xato ketdi",
+    "description": "Kechirasiz, kutilmagan xato yuz berdi. Iltimos, qayta urinib ko'ring.",
+    "technicalDetails": "Texnik tafsilotlar",
+    "tryAgain": "Qayta urinish",
+    "goHome": "Bosh sahifaga",
+    "refresh": "Sahifani yangilash"
+  },
+  "common": {
+    "error": {
+      "generic": "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring."
+    }
   }
 }

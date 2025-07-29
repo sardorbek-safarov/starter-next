@@ -1,4 +1,4 @@
-import { requireAuth, getServerAuth } from '../../../shared/lib/auth-server';
+import { requireAuth, getServerAuth } from '@/shared/lib/auth-server';
 import { DashboardClient } from './DashboardClient';
 
 export default async function DashboardPage() {

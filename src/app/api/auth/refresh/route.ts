@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { API_ENDPOINTS } from '@/shared/config/api';
 
 export async function POST(request: NextRequest) {
   try {
+    // Get refresh token from cookies
     const refreshToken = request.cookies.get('refresh-token')?.value;
 
     if (!refreshToken) {
@@ -12,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Call backend refresh endpoint
-    const response = await fetch(`${process.env.API_BASE_URL}/auth/refresh`, {
+    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.REFRESH, {
       method: 'POST',
       headers: {
         Cookie: `refresh-token=${refreshToken}`,

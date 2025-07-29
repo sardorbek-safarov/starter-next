@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { User } from '../../entities/user/model';
+import { User } from '@/entities/user/model';
+import { API_ENDPOINTS } from '../config/api';
 
 interface AuthResponse {
   user: User | null;
@@ -21,7 +22,7 @@ export async function getServerAuth(): Promise<AuthResponse> {
     // Try with access token first
     if (accessToken) {
       try {
-        const response = await fetch(`${process.env.API_BASE_URL}/auth/me`, {
+        const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.ME, {
           headers: {
             Cookie: `access-token=${accessToken}`,
             'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ export async function getServerAuth(): Promise<AuthResponse> {
     if (refreshToken) {
       try {
         const refreshResponse = await fetch(
-          `${process.env.API_BASE_URL}/auth/refresh`,
+          API_ENDPOINTS.BACKEND.AUTH.REFRESH,
           {
             method: 'POST',
             headers: {
@@ -88,7 +89,7 @@ export async function requireAuth(redirectTo: string = '/login') {
   }
 }
 
-export async function requireGuest(redirectTo: string = '/dashboard') {
+export async function requireGuest(redirectTo: string = '/') {
   const { isAuthenticated } = await getServerAuth();
 
   if (isAuthenticated) {

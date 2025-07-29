@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { API_ENDPOINTS } from '../config/api';
 
 interface AuthenticatedRequest extends NextRequest {
   user?: any;
@@ -74,7 +75,7 @@ export function withAuth(handler: AuthenticatedHandler) {
 
 async function verifyAccessToken(token: string) {
   try {
-    const response = await fetch(`${process.env.API_BASE_URL}/auth/verify`, {
+    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.VERIFY, {
       headers: {
         Cookie: `access-token=${token}`,
       },
@@ -91,7 +92,7 @@ async function verifyAccessToken(token: string) {
 
 async function refreshAccessToken(refreshToken: string) {
   try {
-    const response = await fetch(`${process.env.API_BASE_URL}/auth/refresh`, {
+    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.REFRESH, {
       method: 'POST',
       headers: {
         Cookie: `refresh-token=${refreshToken}`,

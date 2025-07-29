@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { httpClient } from '../lib/http-client';
+import { useToast } from './useToast';
 
 // Example: User profile queries
 export const userKeys = {
@@ -10,11 +11,14 @@ export const userKeys = {
 
 // Get user profile
 export function useUserProfile(userId: string) {
+  const { showGenericError } = useToast();
+
   return useQuery({
     queryKey: userKeys.profile(userId),
     queryFn: async () => {
       const response = await httpClient.get(`/api/users/${userId}`);
       if (!response.ok) {
+        showGenericError();
         throw new Error('Failed to fetch user profile');
       }
       return response.json();
@@ -26,21 +30,29 @@ export function useUserProfile(userId: string) {
 // Update user profile
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
+  const { showGenericError, showSuccess } = useToast();
 
   return useMutation({
     mutationFn: async ({ userId, data }: { userId: string; data: any }) => {
       const response = await httpClient.put(`/api/users/${userId}`, data);
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        const error = await response
+          .json()
+          .catch(() => ({ message: 'Failed to update profile' }));
+        throw new Error(error.message || 'Failed to update profile');
       }
       return response.json();
     },
     onSuccess: (data, variables) => {
       // Update the cache with the new data
       queryClient.setQueryData(userKeys.profile(variables.userId), data);
+      showSuccess('Profile updated successfully');
 
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: userKeys.all });
+    },
+    onError: (error) => {
+      showGenericError();
     },
   });
 }
@@ -55,11 +67,14 @@ export const dashboardKeys = {
 
 // Get dashboard statistics
 export function useDashboardStats() {
+  const { showGenericError } = useToast();
+
   return useQuery({
     queryKey: dashboardKeys.stats(),
     queryFn: async () => {
       const response = await httpClient.get('/api/dashboard/stats');
       if (!response.ok) {
+        showGenericError();
         throw new Error('Failed to fetch dashboard stats');
       }
       return response.json();
@@ -71,6 +86,8 @@ export function useDashboardStats() {
 
 // Get user activities with pagination
 export function useUserActivities(page = 1, pageSize = 10) {
+  const { showGenericError } = useToast();
+
   return useQuery({
     queryKey: dashboardKeys.activities(page),
     queryFn: async () => {
@@ -78,6 +95,7 @@ export function useUserActivities(page = 1, pageSize = 10) {
         `/api/dashboard/activities?page=${page}&pageSize=${pageSize}`
       );
       if (!response.ok) {
+        showGenericError();
         throw new Error('Failed to fetch activities');
       }
       return response.json();

@@ -15,9 +15,38 @@
     "contact": "Contact"
   },
   "Auth": {
-    "login": "Login",
     "email": "Email",
     "password": "Password",
-    "signIn": "Sign In"
+    "name": "Name",
+    "confirmPassword": "Confirm Password",
+    "registering": "Creating account...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one",
+    "login": {
+      "title": "Login",
+      "signIn": "Sign In",
+      "success": "Successfully logged in!"
+    },
+    "register": {
+      "title": "Register",
+      "signUp": "Sign Up",
+      "success": "Account created successfully!"
+    },
+    "logout": {
+      "success": "Successfully logged out!"
+    }
+  },
+  "ErrorBoundary": {
+    "title": "Something went wrong",
+    "description": "We're sorry, but something unexpected happened. Please try again.",
+    "technicalDetails": "Technical Details",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Home",
+    "refresh": "Refresh Page"
+  },
+  "common": {
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }

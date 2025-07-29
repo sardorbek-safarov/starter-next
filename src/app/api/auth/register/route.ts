@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { API_ENDPOINTS } from '../../../../shared/config/api';
+import { API_ENDPOINTS } from '@/shared/config/api';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     // Call your backend API
-    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.LOGIN, {
+    const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.REGISTER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(data, { status: response.status });
     }
   } catch (error) {
-    console.error('Login API error:', error);
+    console.error('Register API error:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

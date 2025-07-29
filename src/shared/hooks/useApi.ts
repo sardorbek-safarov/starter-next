@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { httpClient } from '../lib/http-client';
+import { useToast } from './useToast';
 
 // Generic API mutation hook
 export function useApiMutation<TData = any, TVariables = any>(
@@ -39,7 +40,10 @@ export function useApi() {
     const response = await httpClient.request(url, options);
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
+      // Let mutations handle their own error display with toast
       throw new Error(errorData.message || 'Request failed');
     }
 
