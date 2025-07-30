@@ -1,70 +1,45 @@
 'use client';
 
-import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, ReactNode } from 'react';
+import { ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '../hooks/useAuth';
 
 interface AuthWrapperProps {
   children: ReactNode;
   requireAuth?: boolean;
   requireGuest?: boolean;
-  fallback?: ReactNode;
-  redirectTo?: string;
 }
 
-export function AuthWrapper({
-  children,
-  requireAuth = false,
-  requireGuest = false,
-  fallback,
-  redirectTo,
+export function AuthWrapper({ 
+  children, 
+  requireAuth = false, 
+  requireGuest = false 
 }: AuthWrapperProps) {
-  const { isAuthenticated, isLoading, user, error } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    // Don't redirect while loading
-    if (isLoading) return;
-
-    // If there's an auth error (like 401), treat as not authenticated
-    const isActuallyAuthenticated = isAuthenticated && !error;
-
-    if (requireAuth && !isActuallyAuthenticated) {
-      console.log('Redirecting to login - not authenticated');
-      router.push(redirectTo || '/login');
-      return;
-    }
-
-    if (requireGuest && isActuallyAuthenticated) {
-      console.log('Redirecting to dashboard - already authenticated');
-      router.push(redirectTo || '/');
-      return;
-    }
-  }, [
-    isAuthenticated,
-    isLoading,
-    requireAuth,
-    requireGuest,
-    router,
-    redirectTo,
-    error,
-  ]);
-
-  // Show loading state
+  // Don't do anything while loading
   if (isLoading) {
     return (
-      fallback || <div className='flex justify-center p-8'>Loading...</div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
     );
   }
 
-  // If there's an auth error, treat as not authenticated
-  const isActuallyAuthenticated = isAuthenticated && !error;
+  const isAuthenticated = !!user;
 
-  // Show nothing while redirecting
-  if (
-    (requireAuth && !isActuallyAuthenticated) ||
-    (requireGuest && isActuallyAuthenticated)
-  ) {
+  // For pages that require authentication
+  if (requireAuth && !isAuthenticated) {
+    const redirectUrl = encodeURIComponent(pathname);
+    router.replace(`/login?redirect=${redirectUrl}`);
+    return null;
+  }
+
+  // For pages that require guest access (login/register)
+  if (requireGuest && isAuthenticated) {
+    router.replace('/dashboard');
     return null;
   }
 

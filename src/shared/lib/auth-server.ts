@@ -12,8 +12,8 @@ interface AuthResponse {
 export async function getServerAuth(): Promise<AuthResponse> {
   try {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access-token')?.value;
-    const refreshToken = cookieStore.get('refresh-token')?.value;
+    const accessToken = cookieStore.get('access_token')?.value;
+    const refreshToken = cookieStore.get('refresh_token')?.value;
 
     if (!accessToken && !refreshToken) {
       return { user: null, isAuthenticated: false };
@@ -22,9 +22,9 @@ export async function getServerAuth(): Promise<AuthResponse> {
     // Try with access token first
     if (accessToken) {
       try {
-        const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.ME, {
+        const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.PROFILE, {
           headers: {
-            Cookie: `access-token=${accessToken}`,
+            Cookie: `access_token=${accessToken}`,
             'Content-Type': 'application/json',
           },
           cache: 'no-store',
@@ -47,7 +47,7 @@ export async function getServerAuth(): Promise<AuthResponse> {
           {
             method: 'POST',
             headers: {
-              Cookie: `refresh-token=${refreshToken}`,
+              Cookie: `refresh_token=${refreshToken}`,
               'Content-Type': 'application/json',
             },
             cache: 'no-store',

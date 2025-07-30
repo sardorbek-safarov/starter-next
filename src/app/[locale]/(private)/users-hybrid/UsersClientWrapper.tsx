@@ -32,11 +32,11 @@ const UsersClientWrapper = ({ initialData }: UsersClientWrapperProps) => {
       const backendUrl = buildBackendUrl('users');
       const response = await httpClient.get(backendUrl);
 
-      if (!response.ok) {
+      if (response.status >= 400) {
         throw new Error(`Failed to fetch users: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = response.data;
 
       return {
         users: data.users || data.data || data,

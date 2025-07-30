@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useUpdateUserProfile } from '@/shared/hooks/useQueries';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuth } from '@/features/auth';
 
 export function UserProfileForm() {
   const { user } = useAuth();

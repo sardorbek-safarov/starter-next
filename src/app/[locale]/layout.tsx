@@ -1,10 +1,8 @@
-import { NextIntlClientProvider } from 'next-intl';
+import { AsyncErrorBoundary } from '@/shared/components';
 import { metadata } from '@/shared/config';
-import { AuthProvider } from '@/features/auth/context/AuthContext';
-import { getServerAuth } from '@/shared/lib/auth-server';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
 import { ToastProvider } from '@/shared/providers/ToastProvider';
-import { AsyncErrorBoundary } from '@/shared/components';
+import { NextIntlClientProvider } from 'next-intl';
 
 export { metadata };
 
@@ -26,19 +24,11 @@ export default async function LocaleLayout({
     messages = (await import(`@/locales/en.json`)).default;
   }
 
-  // Get server-side auth state
-  const { user, isAuthenticated } = await getServerAuth();
-
   return (
     <NextIntlClientProvider messages={messages}>
       <AsyncErrorBoundary>
         <QueryProvider>
-          <AuthProvider
-            initialUser={user}
-            initialIsAuthenticated={isAuthenticated}
-          >
-            <ToastProvider>{children}</ToastProvider>
-          </AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
         </QueryProvider>
       </AsyncErrorBoundary>
     </NextIntlClientProvider>

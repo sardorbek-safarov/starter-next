@@ -1,7 +1,7 @@
 'use client';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuth } from '@/features/auth';
 import { User } from '@/entities/user/model';
 import { UserCard } from '@/entities/user/ui/UserCard';
 import {
@@ -44,10 +44,7 @@ export function DashboardClient({ initialUser }: DashboardClientProps) {
   const currentUser = user || initialUser;
 
   return (
-    <AuthWrapper
-      requireAuth
-      fallback={<div className='p-8'>Loading dashboard...</div>}
-    >
+    <AuthWrapper requireAuth>
       <div className='container mx-auto p-8'>
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex justify-between items-center mb-6'>

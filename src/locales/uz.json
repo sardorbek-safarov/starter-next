@@ -14,6 +14,15 @@
     "about": "Haqida",
     "contact": "Aloqa"
   },
+  "Header": {
+    "welcome": "Xush kelibsiz,",
+    "logout": "Chiqish",
+    "login": "Kirish",
+    "register": "Ro'yxatdan o'tish",
+    "loggingOut": "Chiqilmoqda...",
+    "logoutSuccess": "Muvaffaqiyatli chiqdingiz!",
+    "logoutError": "Chiqishda xatolik. Qayta urinib ko'ring."
+  },
   "Auth": {
     "email": "Elektron pochta",
     "password": "Parol",

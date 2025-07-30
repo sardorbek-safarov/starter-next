@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuth } from '@/features/auth';
 
 export function AuthDebugInfo() {
   const { user, isAuthenticated, isLoading, error } = useAuth();

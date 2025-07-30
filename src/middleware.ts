@@ -12,31 +12,33 @@ export default function middleware(request: NextRequest) {
   const locale = request.nextUrl.locale || 'en';
   const pathnameWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
 
-  // Check for auth tokens in cookies
-  const accessToken = request.cookies.get('access_token')?.value;
-  const refreshToken = request.cookies.get('refresh_token')?.value;
-  const isAuthenticated = !!(accessToken || refreshToken);
-  console.log(locale, pathnameWithoutLocale, isAuthenticated);
+  // TEMPORARILY DISABLED AUTH MIDDLEWARE TO TEST REACT QUERY IMPLEMENTATION
+  //
+  // // Check for auth tokens in cookies
+  // const accessToken = request.cookies.get('access_token')?.value;
+  // const refreshToken = request.cookies.get('refresh_token')?.value;
+  // const isAuthenticated = !!(accessToken || refreshToken);
+  // console.log(locale, pathnameWithoutLocale, isAuthenticated);
 
-  // Handle protected routes
-  if (
-    protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route)) &&
-    !authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))
-  ) {
-    console.log('Protected route accessed:', pathnameWithoutLocale);
+  // // Handle protected routes
+  // if (
+  //   protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route)) &&
+  //   !authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))
+  // ) {
+  //   console.log('Protected route accessed:', pathnameWithoutLocale);
 
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
-    }
-  }
+  //   if (!isAuthenticated) {
+  //     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+  //   }
+  // }
 
-  // // Handle auth routes (redirect if already authenticated)
-  if (authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
-    console.log('Auth route accessed:', pathnameWithoutLocale);
-    if (isAuthenticated) {
-      return NextResponse.redirect(new URL(`/${locale}/`, request.url));
-    }
-  }
+  // // // Handle auth routes (redirect if already authenticated)
+  // if (authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
+  //   console.log('Auth route accessed:', pathnameWithoutLocale);
+  //   if (isAuthenticated) {
+  //     return NextResponse.redirect(new URL(`/${locale}/`, request.url));
+  //   }
+  // }
 
   return intlMiddleware(request);
 }

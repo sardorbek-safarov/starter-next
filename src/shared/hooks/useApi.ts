@@ -37,17 +37,24 @@ export function useApi() {
     url: string,
     options?: RequestInit & { skipRefresh?: boolean }
   ): Promise<TData> => {
-    const response = await httpClient.request(url, options);
+    try {
+      const response = await httpClient.request(url, {
+        method: options?.method || 'GET',
+        data: options?.body ? JSON.parse(options.body as string) : undefined,
+        headers: options?.headers as Record<string, string>,
+        skipRefresh: options?.skipRefresh,
+      });
 
-    if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ message: 'Request failed' }));
-      // Let mutations handle their own error display with toast
-      throw new Error(errorData.message || 'Request failed');
+      if (response.status >= 400) {
+        const errorData = response.data || { message: 'Request failed' };
+        throw errorData;
+      }
+
+      return response.data;
+    } catch (error: any) {
+      // Re-throw the error to be handled by React Query or the calling component
+      throw error.response?.data || error;
     }
-
-    return response.json();
   };
 
   const invalidateQueries = (queryKeys: string[][]) => {

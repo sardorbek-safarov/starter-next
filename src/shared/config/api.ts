@@ -41,20 +41,9 @@ export const API_ENDPOINTS = {
       LOGIN: buildBackendUrl('auth/login'),
       REGISTER: buildBackendUrl('auth/register'),
       LOGOUT: buildBackendUrl('auth/logout'),
-      ME: buildBackendUrl('auth/me'),
+      PROFILE: buildBackendUrl('auth/profile'),
       REFRESH: buildBackendUrl('auth/refresh'),
       VERIFY: buildBackendUrl('auth/verify'),
-    },
-  },
-
-  // Internal Next.js API endpoints
-  INTERNAL: {
-    AUTH: {
-      LOGIN: buildInternalUrl('login'),
-      REGISTER: buildInternalUrl('register'),
-      LOGOUT: buildInternalUrl('logout'),
-      ME: buildInternalUrl('me'),
-      REFRESH: buildInternalUrl('refresh'),
     },
   },
 } as const;

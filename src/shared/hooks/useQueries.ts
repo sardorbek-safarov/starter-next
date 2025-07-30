@@ -17,11 +17,11 @@ export function useUserProfile(userId: string) {
     queryKey: userKeys.profile(userId),
     queryFn: async () => {
       const response = await httpClient.get(`/api/users/${userId}`);
-      if (!response.ok) {
+      if (response.status >= 400) {
         showGenericError();
         throw new Error('Failed to fetch user profile');
       }
-      return response.json();
+      return response.data;
     },
     enabled: !!userId, // Only run if userId exists
   });
@@ -35,13 +35,10 @@ export function useUpdateUserProfile() {
   return useMutation({
     mutationFn: async ({ userId, data }: { userId: string; data: any }) => {
       const response = await httpClient.put(`/api/users/${userId}`, data);
-      if (!response.ok) {
-        const error = await response
-          .json()
-          .catch(() => ({ message: 'Failed to update profile' }));
-        throw new Error(error.message || 'Failed to update profile');
+      if (response.status >= 400) {
+        throw new Error(response.data?.message || 'Failed to update profile');
       }
-      return response.json();
+      return response.data;
     },
     onSuccess: (data, variables) => {
       // Update the cache with the new data
@@ -73,11 +70,11 @@ export function useDashboardStats() {
     queryKey: dashboardKeys.stats(),
     queryFn: async () => {
       const response = await httpClient.get('/api/dashboard/stats');
-      if (!response.ok) {
+      if (response.status >= 400) {
         showGenericError();
         throw new Error('Failed to fetch dashboard stats');
       }
-      return response.json();
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 10 * 60 * 1000, // Refetch every 10 minutes
@@ -94,11 +91,11 @@ export function useUserActivities(page = 1, pageSize = 10) {
       const response = await httpClient.get(
         `/api/dashboard/activities?page=${page}&pageSize=${pageSize}`
       );
-      if (!response.ok) {
+      if (response.status >= 400) {
         showGenericError();
         throw new Error('Failed to fetch activities');
       }
-      return response.json();
+      return response.data;
     },
     placeholderData: (previousData) => previousData, // Keep previous data while fetching new page
   });

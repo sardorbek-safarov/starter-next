@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 interface LoginFormProps {
   onSubmit?: (email: string, password: string) => void;
@@ -24,7 +24,7 @@ export function LoginForm({ onSubmit, className = '' }: LoginFormProps) {
         onSubmit(email, password);
       } else {
         // Otherwise use the auth context
-        await login(email, password);
+        await login({ email, password });
       }
     } catch (err) {
       // Error is now handled by TanStack Query and available in authError

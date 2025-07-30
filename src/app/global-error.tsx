@@ -1,6 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 interface GlobalErrorProps {
@@ -9,8 +8,6 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  const t = useTranslations('ErrorBoundary');
-
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Global error:', error);

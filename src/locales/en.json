@@ -14,6 +14,15 @@
     "about": "About",
     "contact": "Contact"
   },
+  "Header": {
+    "welcome": "Welcome,",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "loggingOut": "Logging out...",
+    "logoutSuccess": "Successfully logged out!",
+    "logoutError": "Failed to logout. Please try again."
+  },
   "Auth": {
     "email": "Email",
     "password": "Password",

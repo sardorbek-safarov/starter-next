@@ -13,24 +13,12 @@ interface User {
   role?: string;
 }
 
-interface UsersResponse {
-  users: User[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages?: number;
-}
+interface UsersResponse extends Array<User> {}
 
 const UsersClient = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    total: 0,
-    page: 1,
-    pageSize: 10,
-    totalPages: 0,
-  });
 
   const { showError, showSuccess } = useToast();
 
@@ -40,27 +28,21 @@ const UsersClient = () => {
       setError(null);
 
       // Option 1: Using your HTTP client (recommended for authenticated requests)
-      const response = await httpClient.get(
-        buildBackendUrl(`users?page=${page}&pageSize=${pageSize}`)
-      );
+      const response = await httpClient.get(buildBackendUrl(`users`), {
+        headers: {
+          isServer: 'false', // Indicate client-side request
+        },
+      });
 
-      if (!response.ok) {
+      if (response.status >= 400) {
         throw new Error(`Failed to fetch users: ${response.status}`);
       }
 
-      const data: UsersResponse = await response.json();
+      const data: UsersResponse = response.data;
 
-      setUsers(data.users || []);
-      setPagination({
-        total: data.total || 0,
-        page: data.page || 1,
-        pageSize: data.pageSize || 10,
-        totalPages:
-          data.totalPages ||
-          Math.ceil((data.total || 0) / (data.pageSize || 10)),
-      });
+      setUsers(data || []);
 
-      showSuccess(`Loaded ${data.users?.length || 0} users`);
+      showSuccess(`Loaded ${data?.length || 0} users`);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to fetch users';
@@ -72,45 +54,12 @@ const UsersClient = () => {
     }
   };
 
-  // Alternative fetch function using direct fetch
-  const fetchUsersDirectly = async () => {
-    try {
-      setLoading(true);
-
-      const response = await fetch(buildBackendUrl('users'), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add auth headers if needed
-        },
-        credentials: 'include', // Include cookies
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setUsers(data.users || data);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Network error';
-      setError(errorMessage);
-      showError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const handlePageChange = (newPage: number) => {
-    fetchUsers(newPage, pagination.pageSize);
-  };
-
   const handleRefresh = () => {
-    fetchUsers(pagination.page, pagination.pageSize);
+    fetchUsers();
   };
 
   if (loading) {
@@ -152,16 +101,6 @@ const UsersClient = () => {
         </div>
       )}
 
-      <div className='mb-4 text-sm text-gray-600'>
-        Showing {users.length} of {pagination.total} users
-        {pagination.totalPages > 1 && (
-          <span>
-            {' '}
-            (Page {pagination.page} of {pagination.totalPages})
-          </span>
-        )}
-      </div>
-
       {users.length === 0 && !loading ? (
         <div className='text-center py-8'>
           <p className='text-gray-500'>No users found</p>
@@ -199,44 +138,6 @@ const UsersClient = () => {
               </div>
             ))}
           </div>
-
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className='mt-8 flex justify-center space-x-2'>
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                className='px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
-              >
-                Previous
-              </button>
-
-              {[...Array(Math.min(pagination.totalPages, 5))].map((_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 border rounded ${
-                      pagination.page === pageNum
-                        ? 'bg-blue-600 text-white'
-                        : 'hover:bg-gray-50'
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
-                className='px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50'
-              >
-                Next
-              </button>
-            </div>
-          )}
         </>
       )}
 
@@ -250,33 +151,6 @@ const UsersClient = () => {
           <p>📱 Better for dynamic user interactions</p>
         </div>
       </div>
-
-      {/* Debug information */}
-      <details className='mt-4'>
-        <summary className='text-sm text-gray-500 cursor-pointer'>
-          Debug Information
-        </summary>
-        <div className='mt-2 p-3 bg-gray-100 rounded text-xs'>
-          <p>
-            <strong>Backend URL:</strong> {buildBackendUrl('users')}
-          </p>
-          <p>
-            <strong>Current Page:</strong> {pagination.page}
-          </p>
-          <p>
-            <strong>Page Size:</strong> {pagination.pageSize}
-          </p>
-          <p>
-            <strong>Total Users:</strong> {pagination.total}
-          </p>
-          <p>
-            <strong>Loading:</strong> {loading ? 'Yes' : 'No'}
-          </p>
-          <p>
-            <strong>Error:</strong> {error || 'None'}
-          </p>
-        </div>
-      </details>
     </div>
   );
 };

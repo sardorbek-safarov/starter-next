@@ -1,0 +1,204 @@
+interface RequestConfig extends RequestInit {
+  skipRefresh?: boolean;
+}
+
+import { API_ENDPOINTS } from '../config/api';
+
+class HttpClient {
+  private isRefreshing = false;
+  private refreshPromise: Promise<boolean> | null = null;
+
+  async request(url: string, config: RequestConfig = {}): Promise<Response> {
+    const { skipRefresh = false, ...fetchConfig } = config;
+
+    // 🔍 Detect if we're on server or client
+    const isServer = typeof window === 'undefined';
+
+    console.log('🔍 HttpClient Request:', {
+      url,
+      method: fetchConfig.method || 'GET',
+      environment: isServer ? 'SERVER' : 'CLIENT',
+      timestamp: new Date().toISOString(),
+    });
+
+    // Build request config based on environment
+    const requestConfig: RequestInit = {
+      ...fetchConfig,
+      headers: {
+        'Content-Type': 'application/json',
+        ...fetchConfig.headers,
+        // Add cookies based on environment
+        ...(await this.getCookieHeaders(isServer)),
+      },
+    };
+
+    // Only add credentials: 'include' for client-side requests
+    if (!isServer) {
+      requestConfig.credentials = 'include';
+    }
+    let response = await fetch(url, requestConfig);
+
+    // If we get 401 and haven't already tried to refresh
+    if (response.status === 401 && !skipRefresh && !this.isRefreshing) {
+      const refreshSuccess = await this.refreshToken();
+
+      if (refreshSuccess) {
+        // Retry the original request
+        response = await fetch(url, requestConfig);
+      }
+    }
+
+    return response;
+  }
+
+  private async refreshToken(): Promise<boolean> {
+    if (this.isRefreshing) {
+      // If already refreshing, wait for that to complete
+      return this.refreshPromise || Promise.resolve(false);
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = this.performRefresh();
+
+    try {
+      const result = await this.refreshPromise;
+      return result;
+    } finally {
+      this.isRefreshing = false;
+      this.refreshPromise = null;
+    }
+  }
+
+  private async performRefresh(): Promise<boolean> {
+    try {
+      const isServer = typeof window === 'undefined';
+
+      const refreshConfig: RequestInit = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(await this.getCookieHeaders(isServer)),
+        },
+      };
+
+      // Only add credentials for client-side
+      if (!isServer) {
+        refreshConfig.credentials = 'include';
+      }
+
+      const response = await fetch(
+        API_ENDPOINTS.INTERNAL.AUTH.REFRESH,
+        refreshConfig
+      );
+
+      return response.ok;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
+  }
+
+  // 🍪 COOKIE HANDLING - Different for server vs client
+  private async getCookieHeaders(
+    isServer: boolean
+  ): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {};
+
+    if (isServer) {
+      // 🖥️ SERVER-SIDE: Dynamically import cookies to avoid client-side issues
+      try {
+        // Dynamic import to avoid bundling next/headers in client code
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        const cookieString = cookieStore.toString();
+
+        console.log('🖥️ Server-side cookies:', cookieString);
+
+        // Add the entire cookie string to the Cookie header
+        if (cookieString) {
+          headers['Cookie'] = cookieString;
+        }
+
+        // Also add individual cookies as custom headers if needed
+        const authToken = cookieStore.get('auth-token')?.value;
+        const sessionId = cookieStore.get('session-id')?.value;
+
+        if (authToken) {
+          headers['Authorization'] = `Bearer ${authToken}`;
+        }
+
+        if (sessionId) {
+          headers['X-Session-ID'] = sessionId;
+        }
+      } catch (error) {
+        console.error('Error reading server-side cookies:', error);
+        // Fallback: try to read from process.env or other server-side methods
+      }
+    } else {
+      // 🌐 CLIENT-SIDE: Read from document.cookie
+      const clientCookies = this.parseClientCookies(document.cookie);
+      console.log('🌐 Client-side cookies:', clientCookies);
+
+      // Add specific cookies as headers if needed
+      if (clientCookies['auth-token']) {
+        headers['Authorization'] = `Bearer ${clientCookies['auth-token']}`;
+      }
+
+      if (clientCookies['session-id']) {
+        headers['X-Session-ID'] = clientCookies['session-id'];
+      }
+    }
+
+    return headers;
+  }
+
+  private parseClientCookies(cookieString: string): Record<string, string> {
+    const cookies: Record<string, string> = {};
+
+    if (!cookieString) return cookies;
+
+    cookieString.split(';').forEach((cookie) => {
+      const [name, value] = cookie.trim().split('=');
+      if (name && value) {
+        cookies[name] = decodeURIComponent(value);
+      }
+    });
+
+    return cookies;
+  }
+
+  // Convenience methods
+  async get(url: string, config?: RequestConfig) {
+    return this.request(url, { ...config, method: 'GET' });
+  }
+
+  async post(url: string, data?: any, config?: RequestConfig) {
+    return this.request(url, {
+      ...config,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...config?.headers,
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  async put(url: string, data?: any, config?: RequestConfig) {
+    return this.request(url, {
+      ...config,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...config?.headers,
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  async delete(url: string, config?: RequestConfig) {
+    return this.request(url, { ...config, method: 'DELETE' });
+  }
+}
+
+export const httpClient = new HttpClient();

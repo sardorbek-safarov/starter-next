@@ -12,8 +12,8 @@ type AuthenticatedHandler = (
 
 export function withAuth(handler: AuthenticatedHandler) {
   return async (request: NextRequest, context: any) => {
-    const accessToken = request.cookies.get('access-token')?.value;
-    const refreshToken = request.cookies.get('refresh-token')?.value;
+    const accessToken = request.cookies.get('access_token')?.value;
+    const refreshToken = request.cookies.get('refresh_token')?.value;
 
     if (!accessToken && !refreshToken) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -40,7 +40,7 @@ export function withAuth(handler: AuthenticatedHandler) {
         // Add new cookies to response
         if (refreshResult.newTokens) {
           response.cookies.set(
-            'access-token',
+            'access_token',
             refreshResult.newTokens.accessToken,
             {
               httpOnly: true,
@@ -49,7 +49,7 @@ export function withAuth(handler: AuthenticatedHandler) {
             }
           );
           response.cookies.set(
-            'refresh-token',
+            'refresh_token',
             refreshResult.newTokens.refreshToken,
             {
               httpOnly: true,
@@ -77,7 +77,7 @@ async function verifyAccessToken(token: string) {
   try {
     const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.VERIFY, {
       headers: {
-        Cookie: `access-token=${token}`,
+        Cookie: `access_token=${token}`,
       },
     });
 
@@ -95,7 +95,7 @@ async function refreshAccessToken(refreshToken: string) {
     const response = await fetch(API_ENDPOINTS.BACKEND.AUTH.REFRESH, {
       method: 'POST',
       headers: {
-        Cookie: `refresh-token=${refreshToken}`,
+        Cookie: `refresh_token=${refreshToken}`,
       },
     });
 

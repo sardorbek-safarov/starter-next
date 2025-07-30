@@ -1,5 +1,6 @@
 import React from 'react';
 import { buildBackendUrl } from '@/shared/config/api';
+import { httpClient } from '@/shared';
 
 interface User {
   id: string;
@@ -19,24 +20,19 @@ interface UsersResponse {
 async function fetchUsers(): Promise<UsersResponse> {
   try {
     // Fetch from your actual backend API
-    const backendUrl = buildBackendUrl('users');
-    const response = await fetch(backendUrl, {
-      // Server-side fetch options
-      cache: 'no-store', // Always fetch fresh data
+    const response = await httpClient.get(buildBackendUrl(`users`), {
       headers: {
-        'Content-Type': 'application/json',
-        // Add any authentication headers if needed
-        // 'Authorization': `Bearer ${token}`,
+        isServer: 'true', // Indicate server-side request
       },
     });
 
-    if (!response.ok) {
+    if (response.status >= 400) {
       throw new Error(
         `Failed to fetch users: ${response.status} ${response.statusText}`
       );
     }
 
-    const data = await response.json();
+    const data = response.data;
 
     // Adapt the response to match your interface
     // Adjust this based on your actual backend response structure
